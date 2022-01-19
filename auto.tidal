@@ -1,0 +1,50 @@
+setcps (125/60/4)
+
+all $ (|* gain 1.0)
+
+all $ ((|- pan 1).(|* pan 1))
+
+do
+  resetCyclesTo (0-0.05)
+  let
+    bpm = 125
+  d1 -- rhythm
+    $ stack [
+    s "click" # n 2 # pan 0.5 # lpf 200 # gain 1.6,
+    every' 2 1 (# gain 1) $ s "~ 808sd:11" # lpf 4000 # pan 0.5 # gain 0,
+    every' 4 2 (# gain 1.1) $ s "~ ~ rock ~" # pan 0 # speed (1.1) # lpf 1700 # gain 0,
+    every' 4 0 (# gain 1.1) $ s "~ [~ rock] ~ waterdrop" # pan "0 1" # speed (1.1) # lpf "1600 4000" # gain 0
+    ]
+  d2 -- chord
+    $ slow 2
+    $ (0.003 ~>)
+    $ ((# pingpong 0.2).(# pingpongt (3/16)).(# pingpongfb 0.4))
+    $ s "SinOscSynthBend [~ SinOscSynthBend] ~ ~"
+    # n "<cs4,b4,ef5,fs5> <b4,a4,<e5 df5>> ~ ~"
+    # sustain ((*(100/bpm)) <$> "1")
+    # room 0.6 # size 0.3
+    # gain 0.8
+    # pan (range 0.2 0.8 rand)
+    # vibratoFreq 8 # vibratoDepth 0.5
+  d3 -- light
+    $ jux((|+ n 24).(|* gain 0.25))
+    $ jux((|+ n 12).(|* gain 0.7))
+    $ every' 16 5 (# gain 0.72)
+    $ s "[~ FastSinSynth] ~ ~ ~"
+    # sustain 9
+    # n "<ef6,fs6>"
+    # hpf 800
+    # gain 0
+    # room 0.6 # freeverb 0.8 # size 0.8
+    # vibratoFreq 3 # vibratoDepth 0.1
+
+
+do
+  d4
+    $ slow 2
+    $ s "notes:2 [~ ~ ~ [~ notes:2]] notes:2 ~"
+    # n "<e4,a4,b4> <fs4,cs4>"
+    # pan 0.5
+    # room 0.3 # size 0.7
+    # gain 0.7
+  d4 silence

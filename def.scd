@@ -39,7 +39,7 @@ SuperDirt.start;
 SynthDef("pingpong_delay" ++ ~dirt.numChannels, { |dryBus, effectBus, gate = 1, pingpongt, pingpongfb, pingpong, cps = 1|
 	var signal = In.ar(dryBus, ~dirt.numChannels);
 	var maxDelayTime = 4;
-	var delaytime, delayfeedback, delayAmp, decayTime, left, right, dry;
+	var delaytime, delayfeedback, delayAmp, decayTime, left, right, dry, pingponglpf=3000;
 
 	delayAmp = pingpong;
 	delaytime = pingpongt;
@@ -53,6 +53,7 @@ SynthDef("pingpong_delay" ++ ~dirt.numChannels, { |dryBus, effectBus, gate = 1, 
 
 	dry = signal;
 	right = CombL.ar(dry, maxDelayTime*2, delaytime.lag(0.05)*2, decayTime);
+	right = LPF.ar(right, pingponglpf);
 	left = DelayN.ar(dry + right, maxDelayTime, delaytime.lag(0.05));
 	signal = NumChannels.ar([dry, dry] + [left*delayAmp, right*delayAmp], ~dirt.numChannels);
 
@@ -98,17 +99,34 @@ SynthDef("freeverb" ++ ~dirt.numChannels, { |dryBus, effectBus, gate = 1, size, 
 Server.default.freeAll;
 
 SynthDef("SinOscSynthBend", {
-	arg out, sustain=1, decay=0, pan=0, freq=110, accelerate=0, slide=0, sustainpedal=0.5;
+	arg out, sustain=1, decay=0, pan=0, freq=110, accelerate=0, slide=0, sustainpedal=0.5, vibratoFreq=10, vibratoDepth=0;
 	var fglide, detune, sound, sig1, sig2, env, bendSustain;
 	bendSustain = sustainpedal;
-	detune = 1.001;
+	// detune = 1.001;
+	detune = 1.0;
 	fglide = EnvGen.ar(Env.perc(0.05, 0.3, 1, \lin), timeScale:bendSustain) * (-1*slide/4) + 1;
 	freq = freq * fglide * Line.kr(1, 1+accelerate, bendSustain);
+	freq = freq *(1+((LFPar.ar(vibratoFreq)+1)*(vibratoDepth/50)));
 	sig1 = SinOsc.ar(freq).dup;
 	sig2 = SinOsc.ar(freq * detune).dup;
 	sound = (sig1 + sig2) * 0.5;
 	env = EnvGen.ar(Env.linen(0.01, 0, 0.6, 1, -3), timeScale:sustain, doneAction:2);
 	//env = EnvGen.ar(Env.pairs([[0,0],[0.03,1],[0.2,1-decay],[0.95,1-decay],[1,0]], -1), timeScale:sustain, doneAction:2);
+	OffsetOut.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env));
+}).add;
+
+SynthDef("FastSinSynth", {
+	arg out, sustain=1, decay=0, pan=0, freq=110, accelerate=0, vibratoFreq=10, vibratoDepth=0;
+	var fglide, detune, sound, sig1, sig2, env, panFreq;
+	detune = 1.0;
+	freq = freq *(1+((LFPar.ar(vibratoFreq)+1)*(vibratoDepth/50)));
+	sig1 = SinOsc.ar(freq).dup;
+	sig2 = SinOsc.ar(freq * detune).dup * 0.1;
+	sound = (sig1 + sig2) * 0.5;
+	panFreq = EnvGen.ar(Env.linen(0, 0, 0.6, 8, -7), timeScale:sustain);
+	sound = Pan2.ar(sound, LFPar.kr(panFreq));
+	sound = sound*LFPar.kr(panFreq);
+	env = EnvGen.ar(Env.linen(0, 0, 0.6, 1, -5), timeScale:sustain, doneAction:2);
 	OffsetOut.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env));
 }).add;
 
