@@ -39,7 +39,7 @@ SuperDirt.start;
 SynthDef("pingpong_delay" ++ ~dirt.numChannels, { |dryBus, effectBus, gate = 1, pingpongt, pingpongfb, pingpong, cps = 1|
 	var signal = In.ar(dryBus, ~dirt.numChannels);
 	var maxDelayTime = 4;
-	var delaytime, delayfeedback, delayAmp, decayTime, left, right, dry, pingponglpf=3000;
+	var delaytime, delayfeedback, delayAmp, decayTime, left, right, dry, pingponglpf=2000;
 
 	delayAmp = pingpong;
 	delaytime = pingpongt;
@@ -123,9 +123,9 @@ SynthDef("FastSinSynth", {
 	sig1 = SinOsc.ar(freq).dup;
 	sig2 = SinOsc.ar(freq * detune).dup * 0.1;
 	sound = (sig1 + sig2) * 0.5;
-	panFreq = EnvGen.ar(Env.linen(0, 0, 0.6, 8, -7), timeScale:sustain);
-	sound = Pan2.ar(sound, LFPar.kr(panFreq));
-	sound = sound*LFPar.kr(panFreq);
+	panFreq = 2 + EnvGen.ar(Env.linen(0, 0, 0.6, 6, -6), timeScale:sustain);
+	sound = Pan2.ar(sound, LFPar.kr(panFreq)); // pan
+	sound = sound*LFPar.kr(panFreq); // tremoro
 	env = EnvGen.ar(Env.linen(0, 0, 0.6, 1, -5), timeScale:sustain, doneAction:2);
 	OffsetOut.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env));
 }).add;
@@ -168,6 +168,32 @@ SynthDef("superhammondBend", {
 	Out.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env));
 }).add;
 
+SynthDef("bassSynth", {
+	arg out, sustain=1, decay=0, pan, freq, vibrato=0.5, vrate=7, voice=0, perc=0, percf=2, accelerate=0, slide=0, sustainpedal=0.5;
+	var freqs, amps, sound, click, env, ampscale, attrel, fglide, bendSustain;
+	bendSustain = sustainpedal;
+	attrel = (sustain/2).clip(0,0.005);
+	env = EnvGen.ar(Env.linen(0, 0, 0.6, 1, 6), timeScale:sustain, doneAction:2);
+	fglide = EnvGen.ar(Env.perc(0.05, 0.3, 1, \lin), timeScale:bendSustain) * (-1*slide/4) + 1;
+	freq = freq * fglide * Line.kr(1, 1+accelerate, bendSustain);
+	freqs = [0.5, 1.4988, 1, 2, 2.9976, 4, 5.0409, 5.9953, 8, 1.001] * freq;
+	freqs = 2**(freqs < 63) * freqs; // fold up bottom register
+	freqs = freqs / (2**(freqs > 6000)); // fold down high harmonics
+	freqs = freqs / (2**(freqs > 6000)); // do it again for the really high notes
+	amps = SelectX.kr(voice, #[
+		[1, 4, 5, 4, 3, 1, 0, 0, 0], // 0: bass violin 16'
+	]);
+	amps = amps - [0, 0, 0, 0, 0, 0, 0.5, 1, 1.5]; // damp brilliance a bit
+	amps = 2**(amps-8);
+	click = WhiteNoise.ar(1) * XLine.ar(1,1e-6, 0.1);
+	sound = 0.5 * Mix.ar( SinOsc.ar(freqs, (2pi ! 9).rand, amps/amps.sum) );
+	// sound = perc * 0.5 * SinOsc.ar(freq*percf, 2pi.rand) * XLine.ar(1,1e-6,2*decay+1) + sound;
+	// sound = sound + BAllPass.ar(sound, 1000*LFTri.kr(vrate,0,vibrato/2,1));
+	// panning
+	// sound = Pan2.ar(sound, FSinOsc.kr(1.43));
+	Out.ar(out, DirtPan.ar(sound, ~dirt.numChannels, pan, env));
+}).add;
+
 SynthDef("MyMoog", {
 	arg out, freq = 110, sustain = 1, pan = 0.5, pitch1=4.0, accelerate=0, slide=0, sustainpedal=0.5;
 	var detune, sig1, sig2, env, sound, fglide, bendSustain;
@@ -189,3 +215,6 @@ SynthDef("MyMoog", {
 }).add;
 
 )
+
+
+Env.linen(0, 0, 0.6, 1, 10).plot;
