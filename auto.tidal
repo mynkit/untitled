@@ -1,60 +1,62 @@
 setcps (125/60/4)
 
-all $ (|* gain 1.1)
+all $ (|* gain 1.5)
 
-all $ (((|* gain 1.1)).(|- pan 0).(|* pan 0))
+all $ (((|* gain 1.5)).(|- pan 0).(|* pan 0))
 
 do
   resetCyclesTo (0-0.05)
   let
     bpm = 125
   d15 -- bassdrum
-    $ s "click click?" # n 2 # pan 0.5 # lpf 200 # gain 1.6
+    $ s "click" # n 2 # pan 0.5 # lpf 200 # gain 1.65
   d1 -- rhythm
+    $ sometimesBy 0.1 (# freeverb "0")
+    $ sometimesBy 0.19 ((jux((rev).(|- n 2))).(# pan rand))
     $ stack [
-    every' 2 1 (# gain 0.8)
-      $ someCyclesBy 0.5 (0.125 ~>)
-      $ someCyclesBy 0.25 (0.125 ~>)
-      $ someCyclesBy 0.1 (0.25 ~>)
-      $ degradeBy 0.1
-      $ s "~ tableware" # n (irand 6) # lpf 2000 # pan (range 0.3 0.7 rand) # gain 0,
-    every' 4 1 (# gain 0.9)
-      $ s "[notes~]~" # n "6" # pan 1 # up "<-1>" # gain 0,
-    every' 4 2 (# gain "0.8")
-      $ degradeBy 0.4
-      $ s "~ ~ rock ~" # pan 0 # speed (1.1) # lpf 2000 # gain 0,
-    every' 4 0 (# gain "0.8 1.1")
-      $ s "~ [~ rock] ~ waterdrop" # pan "0 1" # speed (1.1) # lpf "2000 4000" # gain 0
+    every' 4 0 (# gain 0.8)
+      $ s "~ tableware" # n 2 # lpf 4000 # gain 0 # pan (range 0.5 0.7 rand),
+    every' 4 0 (# gain 0.45)
+      $ s "[supervibe ~]~" # n "af6" # pan 1 # sustain 0.3 # gain 0 # room 0.1,
+    every' 4 1 (# gain "0.7")
+      $ s "~ ~ tableware:7 ~" # pan 0 # speed (1.1) # lpf 2000 # gain 0,
+    every' 4 3 (# gain "0.7 0.7")
+      $ s "~ [~ tableware:6?] ~ waterdrop:0" # pan "0 1" # speed (1.1) # lpf "2000 4000" # gain 0
     ]
-    # freeverb 0.7 # size 0.8
+    # freeverb 0.7 # size 0.6
   d2 -- chord
     $ slow 2
+    $ every' 2 0 (|* gain 0)
     $ (0.003 ~>)
-    $ ((# pingpong 0.2).(# pingpongt (3/16)).(# pingpongfb 0.4))
-    $ s "SinOscSynthBend [~ SinOscSynthBend] ~ ~"
-    # n "<cs4,b4,ef5,fs5> <b4,a4,<e5 df5>> ~ ~"
+    -- $ ((# pingpong 0.2).(# pingpongt (3/16)).(# pingpongfb 0.4))
+    $ s "[~ [~ SinOscSynthBend]] [~ SinOscSynthBend] ~ ~"
+    # n "<cs4,b4,ef5,fs5> <~ <b4,a4,df5> ~ <e4,g5,a5>> ~ ~"
+    -- # n "<cs4,b4,ef5,fs5> <e4,g5,a5> ~ ~"
     # sustain ((*(100/bpm)) <$> "1")
     # room 0.6 # size 0.3
-    # gain 0.7
+    # gain 0.65
     # pan (range 0.2 0.8 rand)
     # vibratoFreq 8 # vibratoDepth 0.5
   d3 -- light
     $ jux((|+ n 24).(|* gain 0.2))
     $ jux((|+ n 12).(|* gain 0.8))
-    $ every' 16 7 (# gain 0.6)
-    $ s "[~ FastSinSynth] ~ ~ ~"
+    $ every' 16 2 (# gain 0.45)
+    $ s "~ ~ [~ FastSinSynth] ~"
     # sustain 9
     # n "<ef6,fs6>"
     # gain 0
     # freeverb 0.4 # size 0.6
   d4 -- bass
-    $ (|* gain 1.1)
+    $ (|* gain 0.9)
     $ stack [
-    every' 4 1 (# gain 0.8)
-      $ s "[[~bassSynth] ~] ~" # n "<e1,e2>" # gain 0
-    ,
     every' 4 3 (# gain 0.8)
+      $ s "[~ bassSynth]~ ~ [~ ~]" # n "<cs1,cs2> <b1,b2>" # gain 0
+    ,
+    -- every' 4 2 (# gain 0.8)
+    --   $ s "~ ~ [~bassSynth] ~" # n "<e1,e2>" # gain 0
+    -- ,
+    every' 4 0 (# gain 0.8)
       $ s "[[~bassSynth] ~] [~ [~bassSynth]]" # n "<e1,e2> <cs1,cs2>" # gain 0
     ]
-    # sustain ((*(100/bpm)) <$> "0.5")
-    # voice 2 # shape 0.1
+    # sustain ((*(100/bpm)) <$> "0.6")
+    # voice 2 # shape 0.2

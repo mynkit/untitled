@@ -123,7 +123,7 @@ SynthDef("FastSinSynth", {
 	sig1 = SinOsc.ar(freq).dup;
 	sig2 = SinOsc.ar(freq * detune).dup * 0.1;
 	sound = (sig1 + sig2) * 0.5;
-	panFreq = 2 + EnvGen.ar(Env.linen(0, 0, 0.6, 6, -6), timeScale:sustain);
+	panFreq = 2 + EnvGen.ar(Env.linen(0, 0, 0.6, 5, -6), timeScale:sustain);
 	sound = Pan2.ar(sound, LFPar.kr(panFreq)); // pan
 	sound = sound*LFPar.kr(panFreq); // tremoro
 	env = EnvGen.ar(Env.linen(0, 0, 0.6, 1, -5), timeScale:sustain, doneAction:2);
