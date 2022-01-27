@@ -9,7 +9,7 @@ do
   let
     bpm = 125
   d15 -- bassdrum
-    $ s "click" # n 2 # pan 0.5 # lpf 200 # gain 1.5
+    $ s "click" # n 2 # pan 0.5 # lpf 200 # gain 0.7
   d1 -- rhythm
     -- $ ((# pingpong 0.2).(# pingpongt (3/8)).(# pingpongfb 0.6))
     $ sometimesBy 0.5 ((# freeverb "0.3").(# size 0.6))
@@ -32,7 +32,7 @@ do
     # n "<cs4,b4,ef5,fs5> <~ <b4,a4,df5> ~ <e4,g5,a5>> ~ ~"
     # sustain ((*(100/bpm)) <$> "1")
     # room 0.6 # size 0.3
-    # gain 0.45
+    # gain 0.4
     # pan (range 0.2 0.8 rand)
     # vibratoFreq 8 # vibratoDepth 0.5
   d3 -- light
