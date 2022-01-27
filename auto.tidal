@@ -9,11 +9,11 @@ do
   let
     bpm = 125
   d12 -- bassdrum
-    $ slow 2 $ s "~ click" # n 2 # pan 0.5 # lpf 200 # gain 0.7
-  d13 -- bassdrum
-    $ slow 2 $ s "click" # n 2 # pan 0.5 # lpf 200 # gain 0.7
+    $ slow 8 $ s "~ click!3 ~ ~ click!2" # n 2 # pan 0.5 # lpf 200 # gain 0.7
+  d13 -- bassdrum(crash global effects)
+    $ slow 8 $ s "click [click click ~ ~]" # n 2 # pan 0.5 # lpf 200 # gain 0.7
   d1 -- rhythm
-    $ ((# pingpong 0.7).(# pingpongt (3/8)).(# pingpongfb 0.7))
+    $ ((# pingpong 0.7).(# pingpongt (3/8)).(# pingpongfb 0.3))
     $ sometimesBy 0.5 ((# freeverb "0.3").(# size 0.6))
     $ sometimesBy 0.19 ((jux((rev).(|- n 2))).(# pan rand))
     $ stack [
