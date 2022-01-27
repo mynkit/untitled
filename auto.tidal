@@ -8,10 +8,12 @@ do
   resetCyclesTo (0-0.05)
   let
     bpm = 125
-  d15 -- bassdrum
-    $ s "click" # n 2 # pan 0.5 # lpf 200 # gain 0.7
+  d12 -- bassdrum
+    $ slow 2 $ s "~ click" # n 2 # pan 0.5 # lpf 200 # gain 0.7
+  d13 -- bassdrum
+    $ slow 2 $ s "click" # n 2 # pan 0.5 # lpf 200 # gain 0.7
   d1 -- rhythm
-    -- $ ((# pingpong 0.3).(# pingpongt (3/8)).(# pingpongfb 0.6))
+    $ ((# pingpong 0.7).(# pingpongt (3/8)).(# pingpongfb 0.7))
     $ sometimesBy 0.5 ((# freeverb "0.3").(# size 0.6))
     $ sometimesBy 0.19 ((jux((rev).(|- n 2))).(# pan rand))
     $ stack [
@@ -21,7 +23,7 @@ do
       $ s "[supervibe ~]~" # n "af6" # pan 1 # sustain 0.3 # gain 0 # room 0.1,
     every' 4 1 (# gain "0.7")
       $ s "~ ~ tableware:7 ~" # pan 0 # speed (1.1) # lpf 2000 # gain 0,
-    every' 4 3 (# gain "0.7 0.7")
+    every' 4 3 (# gain "0.7 0.6")
       $ s "~ [~ tableware:6?] ~ waterdrop:0" # pan "0 1" # speed (1.1) # lpf "2000 4000" # gain 0
     ]
   d2 -- chord
