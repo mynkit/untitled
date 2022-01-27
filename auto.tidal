@@ -11,7 +11,7 @@ do
   d15 -- bassdrum
     $ s "click" # n 2 # pan 0.5 # lpf 200 # gain 0.7
   d1 -- rhythm
-    -- $ ((# pingpong 0.2).(# pingpongt (3/8)).(# pingpongfb 0.6))
+    -- $ ((# pingpong 0.3).(# pingpongt (3/8)).(# pingpongfb 0.6))
     $ sometimesBy 0.5 ((# freeverb "0.3").(# size 0.6))
     $ sometimesBy 0.19 ((jux((rev).(|- n 2))).(# pan rand))
     $ stack [
@@ -38,7 +38,7 @@ do
   d3 -- light
     $ jux((|+ n 24).(|* gain 0.2))
     $ jux((|+ n 12).(|* gain 0.8))
-    $ every' 16 2 (# gain 0.45)
+    $ every' 16 2 (# gain 0.4)
     $ s "~ ~ [~ FastSinSynth] ~"
     # sustain 9
     # n "<ef6,fs6>"
