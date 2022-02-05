@@ -1,12 +1,9 @@
-SuperDirt.start;
-
 Server.killAll;
 
 // 出力先デバイスの確認
 ServerOptions.outDevices;
 
 // 出力先変更
-
 (
 Server.default.options.outDevice_(ServerOptions.outDevices[0]);
 Server.default.reboot;
@@ -19,6 +16,7 @@ Server.default.reboot;
 SuperDirt.start;
 )
 
+// シンセやエフェクトの定義
 (
 ~dirt.loadSoundFiles(thisProcess.nowExecutingPath.dirname ++ "/samples/*");
 
@@ -214,6 +212,3 @@ SynthDef("MyMoog", {
 }).add;
 
 )
-
-
-Env.linen(0, 0, 0.6, 1, 10).plot;
