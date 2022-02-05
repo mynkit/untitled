@@ -2,7 +2,7 @@ setcps (125/60/4)
 
 all $ (((|* gain 2.8)).(|- pan 0).(|* pan 1))
 
-unsolo 8
+solo 8
 
 do
   resetCyclesTo (0-0.05)
@@ -37,9 +37,9 @@ do
     $ (0.003 ~>)
     $ s "[~ [~ SinOscSynthBend]] [~ SinOscSynthBend] ~ ~"
     # n "<cs4,b4,ef5,fs5> <~ <b4,a4,df5> ~ <e4,g5,a5>> ~ ~"
-    # sustain ((*(100/bpm)) <$> "1.3")
+    # sustain ((*(100/bpm)) <$> "1.25")
     # room 0.6 # size 0.25
-    # gain 0.26
+    # gain 0.254
     # pan (range 0.2 0.8 rand)
     # vibratoFreq 8 # vibratoDepth 0.24
   d3 -- light
@@ -52,7 +52,7 @@ do
     # gain 0
     # freeverb 0.4 # size 0.6
   d4 -- bass
-    $ (|* gain 0.32)
+    $ (|* gain 0.35)
     $ jux(0.001 ~>)
     $ stack [
     every' 4 3 (# gain 0.8)
@@ -62,5 +62,5 @@ do
       $ s "[[~bassSynth] ~] [~ [~bassSynth]]" # n "<e1,e2> <cs1,cs2>" # gain 0
     ]
     # sustain ((*(100/bpm)) <$> "0.6")
-    # voice 2 # shape 0.4
+    # voice 2 # shape 0.34
     # hpf 110
